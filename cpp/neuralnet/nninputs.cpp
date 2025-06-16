@@ -522,11 +522,14 @@ void NNInputs::fillRowV7(
 
       Color stone = board.colors[loc];
 
-      //Spatial Features 1,2 - pla,opp stone
-      if (stone == pla)
+      //Features 1,2 - pla,opp stone
+      //Features 3,4,5 - 1,2,3 libs
+      if(stone == pla)
         setRowBin(rowBin, pos, 1, 1.0f, posStride, featureStride);
       else if (stone == opp)
-        setRowBin(rowBin, pos, 2, 1.0f, posStride, featureStride);
+        setRowBin(rowBin,pos,2, 1.0f, posStride, featureStride);
+      else if(stone == C_BANLOC)
+        setRowBin(rowBin,pos,3, 1.0f, posStride, featureStride);
 
     }
   }
@@ -544,52 +547,26 @@ void NNInputs::fillRowV7(
       std::cout << "nninput: chosen move not on board ";
     } else {
       int pos = NNPos::locToPos(chosenMove, board.x_size, nnXLen, nnYLen);
-      setRowBin(rowBin, pos, 3, 1.0f, posStride, featureStride);
+      setRowBin(rowBin,pos,4, 1.0f, posStride, featureStride);
     }
   }
 
   else if(board.stage == 2)  // place
   {
     rowGlobal[1] = 1.0f;
-    Loc chosenMove = board.midLocs[0];
-    if(!board.isOnBoard(chosenMove)) {
+    Loc chosenMove = board.midLocs[1];
+    if (!board.isOnBoard(chosenMove))
+    {
       std::cout << "nninput: chosen move not on board ";
     } else {
       int pos = NNPos::locToPos(chosenMove, board.x_size, nnXLen, nnYLen);
-      setRowBin(rowBin, pos, 3, 1.0f, posStride, featureStride);
-    }
-    chosenMove = board.midLocs[1];
-    if(!board.isOnBoard(chosenMove)) {
-      std::cout << "nninput: chosen move not on board ";
-    } else {
-      int pos = NNPos::locToPos(chosenMove, board.x_size, nnXLen, nnYLen);
-      setRowBin(rowBin, pos, 4, 1.0f, posStride, featureStride);
+      setRowBin(rowBin,pos,5, 1.0f, posStride, featureStride);
     }
   } 
   else
     ASSERT_UNREACHABLE;
 
-  // Precalculated results as nn input
-  // Spatial Features 4 - the only location to play
-  // Global features 1 - whether use precalculated results
-  // Global features 2,3,4 - precalculated winner
-  // Global features 5 - the only location is Pass
-  /*if(resultsBeforeNN.inited) {
-    rowGlobal[1] = 1.0;
-    rowGlobal[2] = resultsBeforeNN.winner == C_EMPTY;
-    rowGlobal[3] = resultsBeforeNN.winner == nextPlayer;
-    rowGlobal[4] = resultsBeforeNN.winner == getOpp(nextPlayer);
-    if(board.isOnBoard(resultsBeforeNN.myOnlyLoc))
-      setRowBin(
-        rowBin,
-        NNPos::locToPos(resultsBeforeNN.myOnlyLoc, board.x_size, nnXLen, nnYLen),
-        4,
-        1.0f,
-        posStride,
-        featureStride);
-    else if(resultsBeforeNN.myOnlyLoc == Board::PASS_LOC)
-      rowGlobal[5] = 1.0;
-  }*/
+
 
 
   //Scoring

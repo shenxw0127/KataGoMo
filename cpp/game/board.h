@@ -14,10 +14,9 @@
 #ifdef COMPILE_MAX_BOARD_LEN
 static_assert(COMPILE_MAX_BOARD_LEN should not be defined);
 #endif
-#define COMPILE_MAX_BOARD_LEN 15
+#define COMPILE_MAX_BOARD_LEN 8
 
-//how many stages in each move
-//eg: Chess has 2 stages: moving which piece, and where to place.
+
 static const int STAGE_NUM_EACH_PLA = 3;
 
 //max moves num of a game
@@ -30,6 +29,7 @@ struct Board;
 
 //Player
 typedef int8_t Player;
+
 static constexpr Player P_BLACK = 1;
 static constexpr Player P_WHITE = 2;
 
@@ -39,7 +39,8 @@ static constexpr Color C_EMPTY = 0;
 static constexpr Color C_BLACK = 1;
 static constexpr Color C_WHITE = 2;
 static constexpr Color C_WALL = 3;
-static constexpr int NUM_BOARD_COLORS = 4;
+static constexpr Color C_BANLOC = 4;
+static constexpr int NUM_BOARD_COLORS = 5;
 
 static inline Color getOpp(Color c)
 {return c ^ 3;}
@@ -137,7 +138,6 @@ struct Board
 
   Board& operator=(const Board&) = default;
 
-  //Functions------------------------------------
 
   bool isLegal(Loc loc, Player pla) const;
   //Check if this location is on the board
@@ -149,9 +149,7 @@ struct Board
   int numPlaStonesOnBoard(Player pla) const;
 
 
-  //Sets the specified stone if possible, including overwriting existing stones.
-  //Resolves any captures and/or suicides that result from setting that stone, including deletions of the stone itself.
-  //Returns false if location or color were out of range.
+  //Sets the specified stone if possible. Returns true usually, returns false location or color were out of range.
   bool setStone(Loc loc, Color color);
 
   // Same, but sets multiple stones, and only requires that the final configuration contain no zero-liberty groups.
@@ -198,16 +196,13 @@ struct Board
   Hash128 pos_hash; //A zobrist hash of the current board position (does not include ko point or player to move)
 
   short adj_offsets[8]; //Indices 0-3: Offsets to add for adjacent points. Indices 4-7: Offsets for diagonal points. 2 and 3 are +x and +y.
-
-  
+    //who plays the next move
+    Color nextPla;
   //which stage. Normally 0 = choosing piece. 1 = where to place
   int stage;
 
-  //who plays the next move
-  Color nextPla;
-
-  //Ò»²½ÄÚÃ¿Ò»½×¶ÎµÄÑ¡µã
-  //ÀıÈç£ºÏóÆåÀàmidLoc[0]ÊÇÑ¡ÔñµÄÆå×Ó£¬midLoc[1]ÊÇÂäµã
+    //ä¸€æ­¥å†…æ¯ä¸€é˜¶æ®µçš„é€‰ç‚¹
+    //ä¾‹å¦‚ï¼šè±¡æ£‹ç±»midLoc[0]æ˜¯é€‰æ‹©çš„æ£‹å­ï¼ŒmidLoc[1]æ˜¯è½ç‚¹
   Loc midLocs[STAGE_NUM_EACH_PLA];
 
 

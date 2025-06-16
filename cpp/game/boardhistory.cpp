@@ -214,7 +214,6 @@ void BoardHistory::makeBoardMoveAssumeLegal(Board& board, Loc moveLoc, Player mo
   winner = C_EMPTY;
   isNoResult = false;
   isResignation = false;
-  int oldStage = board.stage;
 
   board.playMoveAssumeLegal(moveLoc,movePla);
 
@@ -226,7 +225,7 @@ void BoardHistory::makeBoardMoveAssumeLegal(Board& board, Loc moveLoc, Player mo
 
   moveHistory.push_back(Move(moveLoc,movePla));
   presumedNextMovePla = board.nextPla;
-  Color maybeWinner = GameLogic::checkWinnerAfterPlayed(board, *this, movePla, moveLoc,oldStage);
+  Color maybeWinner = GameLogic::checkWinnerAfterPlayed(board, *this, movePla, moveLoc);
   if(maybeWinner!=C_WALL) { //game finished
     setWinner(maybeWinner);
   }

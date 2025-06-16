@@ -27,12 +27,9 @@ namespace GameLogic {
 
   bool isLegal(const Board& board, Player pla, Loc loc);
 
-  MovePriority getMovePriorityAssumeLegal(const Board& board, const BoardHistory& hist, Player pla, Loc loc);
-  MovePriority getMovePriority(const Board& board, const BoardHistory& hist, Player pla, Loc loc);
 
   //C_EMPTY = draw, C_WALL = not finished 
-  Color checkWinnerAfterPlayed(const Board& board, const BoardHistory& hist, Player pla, Loc loc, int oldStage);
-  Loc nearestJumpTarget(const Board& board, Loc lsrc, Loc ldst);
+  Color checkWinnerAfterPlayed(const Board& board, const BoardHistory& hist, Player pla, Loc loc);
 
   //some results calculated before calculating NN
   //part of NN input, and then change policy/value according to this
